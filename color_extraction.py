@@ -1,23 +1,13 @@
-import cv2
 import numpy as np
-from sklearn.cluster import KMeans
+import cv2
 
-def extract_dominant_colors(image, k=5):
-    # Konversi gambar ke array warna
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    img = img.reshape((-1, 3))
+def detect_color(image):
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    # Menggunakan KMeans untuk menemukan warna dominan
-    kmeans = KMeans(n_clusters=k)
-    kmeans.fit(img)
-    
-    # Mengambil warna dan frekuensinya
-    colors = kmeans.cluster_centers_.astype(int)
-    labels = kmeans.labels_
-    counts = np.bincount(labels)
+    pixels = image.reshape((-1, 3))
 
-    # Mengurutkan warna berdasarkan frekuensi
-    sorted_indices = np.argsort(counts)[::-1]
-    dominant_colors = colors[sorted_indices]
+    unique, counts = np.unique(pixels, axis=0, return_counts=True)
 
-    return dominant_colors
+    most_frequent_color = unique[np.argmax(counts)]
+
+    return most_frequent_color
